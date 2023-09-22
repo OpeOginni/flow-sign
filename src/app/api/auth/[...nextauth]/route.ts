@@ -9,6 +9,7 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { generateKeys } from "@/utils/crypto";
+import { createFlowAccount } from "@/utils/onboarding";
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ export const authOptions: NextAuthOptions = {
     adapter: {
         ...DZZLEAdapter,
         createUser: async (user) => {
+
             // Using non-null assertion as according to NextAuth this method is requried.  
             const createdUser = await DZZLEAdapter.createUser!(user)
 
@@ -25,15 +27,24 @@ export const authOptions: NextAuthOptions = {
             // Run whatever callbacks you want here
             console.log("generating keys")
             const generatedKeys = await generateKeys()
+            console.log(generatedKeys)
+            console.log("generating wallet")
+
+            const walletAddress = await createFlowAccount(generatedKeys.publicKey, 10.0)
+            console.log(walletAddress)
+
             const updatedCreatedUser = await db
                 .update(users)
                 .set({
                     accountPrivKey: generatedKeys.privateKey,
-                    accountPubKey: generatedKeys.publicKey
+                    accountPubKey: generatedKeys.publicKey,
+                    walletAddress: walletAddress
                 })
                 .where(eq(users.id, createdUser.id)).returning()
 
             return updatedCreatedUser[0];
+
+
         }
     },
     providers: [
