@@ -1,7 +1,7 @@
 {
   "contracts": {
     "FlowToken": {
-      "source": "./contracts/utility/FungibleToken.cdc",
+      "source": "./contracts/utility/FlowToken.cdc",
       "aliases": {
         "emulator": "0ae53cb6e3f42a79",
         "mainnet": "1654653399040a61",
@@ -16,15 +16,15 @@
         "testnet": "9a0766d93b6608b7"
       }
     },
-    "NonFungibleToken": {
-      "source": "./contracts/utility/NonFungibleToken.cdc",
+    "MetadataViews": {
+      "source": "./contracts/utility/MetadataViews.cdc",
       "aliases": {
         "mainnet": "f233dcee88fe0abe",
         "testnet": "9a0766d93b6608b7"
       }
     },
-    "MetadataViews": {
-      "source": "./contracts/utility/MetadataViews.cdc",
+    "NonFungibleToken": {
+      "source": "./contracts/utility/NonFungibleToken.cdc",
       "aliases": {
         "mainnet": "f233dcee88fe0abe",
         "testnet": "9a0766d93b6608b7"
@@ -36,15 +36,22 @@
     "mainnet": "access.mainnet.nodes.onflow.org:9000",
     "testnet": "access.devnet.nodes.onflow.org:9000"
   },
-  "deployments": {
-    "emulator": {
-      "emulator-account": ["NonFungibleToken", "FungibleToken", "MetadataViews"]
-    }
-  },
   "accounts": {
+    "admin-testnet": {
+      "address": "47864a1af5d67425",
+      "key": {
+        "type": "file",
+        "location": "admin-testnet.pkey"
+      }
+    },
     "emulator-account": {
       "address": "f8d6e0586b0a20c7",
       "key": "3af33a6a71acea977b97fc73807ad73d1058505ffcac3fcea406e2a83b170963"
+    }
+  },
+  "deployments": {
+    "emulator": {
+      "emulator-account": ["NonFungibleToken", "FungibleToken", "MetadataViews"]
     }
   }
 }
