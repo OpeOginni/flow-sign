@@ -338,14 +338,12 @@ access(all) contract FlowSign: NonFungibleToken {
 
             let contractCreator = publicAccount.address
 
+            // Appends...Just Adds
+            potentialSigners.append(contractCreator)
+
             let newContract: @FlowSign.FlowSignContract <- create FlowSignContract(contractText: contractText, potentialSigners: potentialSigners, expirationDate: expirationDate, neededSignerAmount: neededSignerAmount, contractCreator: contractCreator)
 
             FlowSign.contractById[newContract.id] <-! newContract
-
-
-            var newContractNFT: @FlowSign.NFT <- create NFT(contractText: contractText, potentialSigners: potentialSigners, expirationDate: expirationDate, neededSignerAmount: neededSignerAmount, contractCreator: contractCreator, flowSignContractID: FlowSign.contractCount)
-
-            self.deposit(token: <- newContractNFT)
 
             FlowSign.totalSupply = FlowSign.totalSupply + 1
             
@@ -377,7 +375,7 @@ access(all) contract FlowSign: NonFungibleToken {
         return <- create Collection()
     }
 
-    /// FlowSign contract initializer
+    /// Golazos contract initializer
     ///
     init() {
         // Set the named paths
@@ -389,6 +387,7 @@ access(all) contract FlowSign: NonFungibleToken {
         self.contractCount = 0
         self.contractById <- {}
 
+        // Create an Admin resource and save it to storage
         let collection <- create Collection()
         self.account.save(<-collection, to: self.CollectionStoragePath)
 
