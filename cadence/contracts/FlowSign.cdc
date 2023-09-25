@@ -377,7 +377,7 @@ access(all) contract FlowSign: NonFungibleToken {
         return <- create Collection()
     }
 
-    /// Golazos contract initializer
+    /// FlowSign contract initializer
     ///
     init() {
         // Set the named paths
@@ -389,7 +389,6 @@ access(all) contract FlowSign: NonFungibleToken {
         self.contractCount = 0
         self.contractById <- {}
 
-        // Create an Admin resource and save it to storage
         let collection <- create Collection()
         self.account.save(<-collection, to: self.CollectionStoragePath)
 
