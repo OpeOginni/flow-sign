@@ -1,5 +1,3 @@
-
-
 import NonFungibleToken from "./utility/NonFungibleToken.cdc";
 import MetadataViews from "./utility/MetadataViews.cdc";
 
@@ -41,9 +39,11 @@ access(all) contract FlowSign: NonFungibleToken {
     /// Entity Counts
     ///
     access(all) var totalSupply: UInt64
+    access(all) var contractCount: UInt64
 
     /// Metadata Dictionaries
     ///
+    access(contract) var contractById: @{UInt64: FlowSignContract}
 
     /// A public struct to access Contract data
     ///
@@ -53,32 +53,33 @@ access(all) contract FlowSign: NonFungibleToken {
         access(self) let contractText: String
         access(self) let potentialSigners: [Address]
         access(self) let expirationDate: UFix64
-        access(self) let neededSignerAmount: Int64
+        access(self) let neededSignerAmount: Int
         access(self) let contractCreator: Address
 
         access(all) let creationDate: UFix64
         access(all) var numberOfCopies: Int64
 
         access(all) var signers: {Address: Bool}
-        access(all) var signatureCount: Int64
+        access(all) var signatureCount: Int
         access(all) var valid: Bool
         init(
             contractText: String,
             potentialSigners: [Address],
             expirationDate: UFix64,
-            neededSignerAmount: Int64,
+            neededSignerAmount: Int,
             contractCreator: Address,
         ){
             pre {
-                expirationDate > getCurrentBlock().timestamp : "Expiration date must be in the future"
+                // expirationTime > getCurrentBlock().timestamp : "Expiration date must be in the future"
                 potentialSigners.length > 0 : "There must be at least one potential signer"
-                neededSignerAmount > potentialSigners.length as! Int64 / 2 : "Needed Signer Amount must be more than half of the potential signers"
+                neededSignerAmount >=  potentialSigners.length / 2 : "Needed Signer Amount must be more than half of the potential signers"
+                potentialSigners.length >=  neededSignerAmount : "Needed Signer Amount must be less than the number of potential signers"
             }
 
-            self.id = self.uuid
+            self.id = FlowSign.contractCount + 1
             self.contractText = contractText
             self.potentialSigners = potentialSigners
-            self.expirationDate = expirationDate + getCurrentBlock().timestamp
+            self.expirationDate = expirationDate
             self.neededSignerAmount = neededSignerAmount
             self.creationDate = getCurrentBlock().timestamp
             self.contractCreator = contractCreator
@@ -89,36 +90,48 @@ access(all) contract FlowSign: NonFungibleToken {
             self.numberOfCopies = 0
 
             emit FlowSignContractCreated(id: self.id, creator: self.contractCreator , potentialSigners: self.potentialSigners)
+            FlowSign.contractCount = FlowSign.contractCount + 1
         }
 
-        access(all) fun getContractCreator(): Address {return self.contractCreator}
+        access(contract) fun getContractCreator(): Address {return self.contractCreator}
 
-        access(all) fun getID(): UInt64 {return self.id}
+        access(contract) fun getID(): UInt64 {return self.id}
 
-        access(all) fun getContractText(): String {return self.contractText}
+        access(contract) fun getContractText(): String {return self.contractText}
 
-        access(all) fun getPotentialSigners(): [Address] {return self.potentialSigners}
+        access(contract) fun getPotentialSigners(): [Address] {return self.potentialSigners}
 
-        access(all) fun getSigners(): {Address: Bool} {return self.signers}
+        access(contract) fun getSigners(): {Address: Bool} {return self.signers}
 
-        access(all) fun getContractStatus(): String {
+        access(contract) fun getSignatureCount(): Int {return self.signatureCount}
+
+        access(contract) fun getExpirationDate(): UFix64 {return self.expirationDate}
+
+        access(contract) fun getContractStatus(): String {
             if(self.valid){
                 return "VALID"
             } else if(self.expirationDate < getCurrentBlock().timestamp){
                 return "EXPIRED"
             } else {
-                return "INVALID"
+                return "ONGOING"
             }
         }
 
-        access(all) fun signContract(signer: Address) {
+        access(self) fun addSigner(signer: Address){
+            log("Signer Added")
+            self.signers[signer] = true
+
+            self.signatureCount = self.signatureCount + 1
+        }
+
+        access(contract) fun signContract(signer: Address) {
             pre {
+                self.potentialSigners.contains(signer) : "You are not a Potential Signer"
                 self.expirationDate > getCurrentBlock().timestamp : "Contract has expired"
-                self.signers[signer] == false : "Signer has already signed"
+                self.signers[signer] == nil : "Signer has already signed"
             }
 
-            self.signers[signer] = true
-            self.signatureCount = self.signatureCount + 1
+            self.addSigner(signer: signer)
 
             /// If the needed number of signers has been reached, the contract is valid
             if(self.signatureCount == self.neededSignerAmount){
@@ -136,98 +149,113 @@ access(all) contract FlowSign: NonFungibleToken {
     // NFT
     //------------------------------------------------------------
 
+    /// A public collection interface that restricts the functions that can be borrowed in the Contract NFT
+    ///
+    access(all) resource interface FlowSignNFTPublic {
+        access(all) fun getContractCreator(): Address
+        access(all) fun getContractStatus(): String
+        access(all) fun getPotentialSigners(): [Address]
+        access(all) fun getContractSigners(): {Address:Bool}
+        access(all) fun getContractId(): UInt64 
+        access(all) fun getSignatureCount(): Int
+        access(all) fun getContractText(): String
+        access(all) fun getContractExpirationDate(): UFix64
+
+    }
+
+    // Only owners should be able to see/use the following functions:
+    // 1) signContract
+
     /// A FlowSign NFT
     ///
-    access(all) resource NFT: NonFungibleToken.INFT {
+    access(all) resource NFT: NonFungibleToken.INFT, FlowSignNFTPublic {
         access(all) let id: UInt64
 
-        access(self) let FlowSignContractId: UInt64
-        access(self) let Contract: @FlowSign.FlowSignContract
+        access(self) let flowSignContractId: UInt64
+
 
         init(
             contractText: String,
             potentialSigners: [Address],
             expirationDate: UFix64,
-            neededSignerAmount: Int64,
+            neededSignerAmount: Int,
             contractCreator: Address,
+            flowSignContractID: UInt64
         ){
-            pre {
-                expirationDate > getCurrentBlock().timestamp : "Expiration date must be in the future"
-                potentialSigners.length > 0 : "There must be at least one potential signer"
-                neededSignerAmount > potentialSigners.length as! Int64 / 2 : "Needed Signer Amount must be more than half of the potential signers"
-            }
 
             self.id = self.uuid
 
-            self.Contract <- create FlowSignContract(
-                contractText: contractText,
-                potentialSigners: potentialSigners,
-                expirationDate: expirationDate,
-                neededSignerAmount: neededSignerAmount,
-                contractCreator: contractCreator
-            )
 
-            self.FlowSignContractId = self.Contract.id
+            self.flowSignContractId = flowSignContractID
 
-            for potentialSigner in potentialSigners {
-            // Each Potential Signer is Sent a Contract NFT that they can Sign and Keep for Reference of the Contract
-
-                let participatingSigner = getAccount(potentialSigner).getCapability(FlowSign.CollectionPublicPath)
-                    .borrow<&{FlowSign.FlowSignCollectionPublic}>()
-                    ?? panic("Could not get reference to the NFT Collection")
-
-                let copyContract <- create NFT(contractText: contractText,
-                                                potentialSigners: potentialSigners,
-                                                expirationDate: expirationDate,
-                                                neededSignerAmount: neededSignerAmount,
-                                                contractCreator: self.owner?.address!
-                                                )
-                participatingSigner.deposit(token: <- copyContract)
-            }
         }
 
-        access(all) fun signContract() {
-            self.Contract.signContract(signer: self.owner?.address!)
+        access(all) fun signContract(): {Address: Bool} {
+
+            var flowSignContract = (&FlowSign.contractById[self.flowSignContractId] as &FlowSign.FlowSignContract?)!
+
+            flowSignContract.signContract(signer: self.owner?.address!)
+            return flowSignContract.signers
         }
 
-        access(all) fun getContractResourceId(): UInt64 {
-            return self.Contract.getID()
+        access(all) fun getContractId(): UInt64 {
+
+            return self.flowSignContractId
         }
 
         access(all) fun getContractCreator(): Address {
-            return self.Contract.getContractCreator()
+            var flowSignContract = (&FlowSign.contractById[self.flowSignContractId] as &FlowSign.FlowSignContract?)!
+
+            return flowSignContract.getContractCreator()
         }
 
         access(all) fun getContractText(): String {
-            return self.Contract.getContractText()
+            var flowSignContract = (&FlowSign.contractById[self.flowSignContractId] as &FlowSign.FlowSignContract?)!
+
+            return flowSignContract.getContractText()
         }
 
         access(all) fun getContractStatus(): String {
-            return self.Contract.getContractStatus()
+            var flowSignContract = (&FlowSign.contractById[self.flowSignContractId] as &FlowSign.FlowSignContract?)!
+
+            return flowSignContract.getContractStatus()
         }
 
         access(all) fun getContractSigners(): {Address:Bool} {
-            return self.Contract.getSigners()
+            var flowSignContract = (&FlowSign.contractById[self.flowSignContractId] as &FlowSign.FlowSignContract?)!
+
+            return flowSignContract.getSigners()
         }
 
         access(all) fun getPotentialSigners(): [Address] {
-            return self.Contract.getPotentialSigners()
-        }
+            var flowSignContract = (&FlowSign.contractById[self.flowSignContractId] as &FlowSign.FlowSignContract?)!
 
-        destroy() {
-            destroy self.Contract
+            return flowSignContract.getPotentialSigners()
+        } getSignatureCount
+
+        access(all) fun getSignatureCount(): Int {
+            var flowSignContract = (&FlowSign.contractById[self.flowSignContractId] as &FlowSign.FlowSignContract?)!
+
+            return flowSignContract.getSignatureCount()
+        } getContractExpirationDate
+
+        access(all) fun getContractExpirationDate(): UFix64 {
+            var flowSignContract = (&FlowSign.contractById[self.flowSignContractId] as &FlowSign.FlowSignContract?)!
+
+            return flowSignContract.getExpirationDate()
         }
     }
     //------------------------------------------------------------
     // Collection
     //------------------------------------------------------------
 
-    /// A public collection interface that allows Moment NFTs to be borrowed
+    /// A public collection interface that allows Contract NFTs to be borrowed
     ///
-    pub resource interface FlowSignCollectionPublic {
-        pub fun deposit(token: @NonFungibleToken.NFT)
-        pub fun getIDs(): [UInt64]
-        pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT
+    access(all) resource interface FlowSignCollectionPublic {
+        access(all) fun deposit(token: @NonFungibleToken.NFT)
+        access(all) fun getIDs(): [UInt64]
+        access(all) fun borrowNFT(id: UInt64): &NonFungibleToken.NFT
+        access(all) fun borrowPublicContractNFT(id: UInt64): &FlowSign.NFT{FlowSign.FlowSignNFTPublic}?
     }
 
     /// An NFT Collection
@@ -251,7 +279,7 @@ access(all) contract FlowSign: NonFungibleToken {
             let contract <- token as! @FlowSign.NFT
 
             let id: UInt64 = contract.id
-            let contractResourceId = contract.getContractResourceId()
+            let contractResourceId = contract.getContractId()
 
             // Add the new contract to the dictionary, this removes the old one
             let oldContract <- self.ownedNFTs[id] <- contract
@@ -278,23 +306,62 @@ access(all) contract FlowSign: NonFungibleToken {
             return (&self.ownedNFTs[id] as &NonFungibleToken.NFT?)!
         }
 
+        /// borrowPublicMomentNFT gets a reference to an NFT in the collection
+        ///
+        access(all) fun borrowPublicContractNFT(id: UInt64): &FlowSign.NFT{FlowSign.FlowSignNFTPublic}? {
+            if self.ownedNFTs[id] != nil {
+                let ref = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
+                return ref as! &FlowSign.NFT
+            } else {
+                return nil
+            }
+        }
+
+        access(all) fun borrowContractNFT(id: UInt64): &FlowSign.NFT? {
+            if self.ownedNFTs[id] != nil {
+                let ref = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
+                return ref as! &FlowSign.NFT
+            } else {
+                return nil
+            }
+        }
+
         /// Mint a Contract NFT
         ///
         access(all) fun createContract(
             contractText: String,
             potentialSigners: [Address],
             expirationDate: UFix64,
-            neededSignerAmount: Int64){
+            neededSignerAmount: Int){
 
-            var newContract: @FlowSign.NFT <- create NFT(contractText: contractText,
-                                                         potentialSigners: potentialSigners,
-                                                         expirationDate: expirationDate,
-                                                         neededSignerAmount: neededSignerAmount,
-                                                         contractCreator: self.owner?.address!)
+            let publicAccount = self.owner ?? panic("Cannot Get Public Account")
 
-            self.deposit(token: <- newContract)
+            let contractCreator = publicAccount.address
+
+            let newContract: @FlowSign.FlowSignContract <- create FlowSignContract(contractText: contractText, potentialSigners: potentialSigners, expirationDate: expirationDate, neededSignerAmount: neededSignerAmount, contractCreator: contractCreator)
+
+            FlowSign.contractById[newContract.id] <-! newContract
+
+
+            var newContractNFT: @FlowSign.NFT <- create NFT(contractText: contractText, potentialSigners: potentialSigners, expirationDate: expirationDate, neededSignerAmount: neededSignerAmount, contractCreator: contractCreator, flowSignContractID: FlowSign.contractCount)
+
+            self.deposit(token: <- newContractNFT)
 
             FlowSign.totalSupply = FlowSign.totalSupply + 1
+            
+            for potentialSigner in potentialSigners {
+            // Each Potential Signer is Sent a Contract NFT that they can Sign and Keep for Reference of the Contract
+
+                let participatingSignerCollection = getAccount(potentialSigner).getCapability(FlowSign.CollectionPublicPath)
+                    .borrow<&{FlowSign.FlowSignCollectionPublic}>()
+                    ?? panic("Could not get reference to the NFT Collection")
+
+                let copyContract <- create NFT(contractText: contractText, potentialSigners: potentialSigners, expirationDate: expirationDate, neededSignerAmount: neededSignerAmount, contractCreator: contractCreator, flowSignContractID: FlowSign.contractCount)
+                participatingSignerCollection.deposit(token: <- copyContract)
+
+                FlowSign.totalSupply = FlowSign.totalSupply + 1
+            }
+
         }
 
         access(all) fun getIDs(): [UInt64] {
@@ -319,10 +386,16 @@ access(all) contract FlowSign: NonFungibleToken {
 
         // Initialize the entity counts
         self.totalSupply = 0
+        self.contractCount = 0
+        self.contractById <- {}
 
         // Create an Admin resource and save it to storage
         let collection <- create Collection()
         self.account.save(<-collection, to: self.CollectionStoragePath)
+
+        // publish a reference to the Collection in storage
+        self.account.link<&{FlowSignCollectionPublic}>(self.CollectionPublicPath, target: self.CollectionStoragePath)
+
 
         // Let the world know we are here
         emit ContractInitialized()
