@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate": "drizzle-kit generate:pg",
-    "push-db": "drizzle-kit push:pg"
+    "push-db": "drizzle-kit push:pg",
+    "generate-migration": "drizzle-kit generate:pg --out src/drizzle/migrations --schema src/db/schema.ts",
+    "migrate": "bun src/db/migrate.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^0.3.2",
@@ -41,6 +42,7 @@
     "superjson": "^1.13.1",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
+    "ts-node": "^10.9.1",
     "typescript": "5.2.2"
   },
   "devDependencies": {

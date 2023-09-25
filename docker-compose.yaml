@@ -1,17 +1,22 @@
 version: "3.8"
 
 services:
-  postgres_db:
-    image: postgres:16
+  db:
+    image: postgres:14
     restart: always
     environment:
-      POSTGRES_DB: flow_sign
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=flow_sign
     ports:
       - 5432:5432
     networks:
       - my_network
-
+    volumes:
+      - db:/var/lib/postgresql/data
 networks:
   my_network:
+
+volumes:
+  db:
+    driver: local

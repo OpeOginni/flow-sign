@@ -30,7 +30,7 @@ export const authOptions: NextAuthOptions = {
             console.log(generatedKeys)
             console.log("generating wallet")
 
-            const walletAddress = await createFlowAccount(generatedKeys.publicKey, 10.0)
+            const walletAddress = await createFlowAccount(generatedKeys.publicKey)
             console.log(walletAddress)
 
             const updatedCreatedUser = await db
