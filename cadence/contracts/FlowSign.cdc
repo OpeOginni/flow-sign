@@ -1,5 +1,4 @@
 import NonFungibleToken from "./utility/NonFungibleToken.cdc";
-import MetadataViews from "./utility/MetadataViews.cdc";
 
 access(all) contract FlowSign: NonFungibleToken {
 

@@ -20,15 +20,18 @@
       "source": "./contracts/utility/MetadataViews.cdc",
       "aliases": {
         "mainnet": "f233dcee88fe0abe",
-        "testnet": "9a0766d93b6608b7"
+        "testnet": "631e88ae7f1d7c20"
       }
     },
     "NonFungibleToken": {
       "source": "./contracts/utility/NonFungibleToken.cdc",
       "aliases": {
         "mainnet": "f233dcee88fe0abe",
-        "testnet": "9a0766d93b6608b7"
+        "testnet": "631e88ae7f1d7c20"
       }
+    },
+    "FlowSign": {
+      "source": "./contracts/FlowSign.cdc"
     }
   },
   "networks": {
@@ -52,6 +55,9 @@
   "deployments": {
     "emulator": {
       "emulator-account": ["NonFungibleToken", "FungibleToken", "MetadataViews"]
+    },
+    "testnet": {
+      "admin-testnet": ["FlowSign"]
     }
   }
 }
