@@ -33,6 +33,12 @@ const routes = [
     color: "text-[#ac2f63]",
   },
   {
+    label: "My Contracts",
+    icon: ShieldCheck,
+    href: "/my-contracts",
+    color: "text-[#ac2f63]",
+  },
+  {
     label: "Verify Contract",
     icon: ShieldCheck,
     href: "/verify",

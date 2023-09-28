@@ -17,7 +17,7 @@ export async function createFlowAccount(publicKey: string): Promise<string> {
     cadence: `
     import FungibleToken from 0x9a0766d93b6608b7
     import FlowToken from 0x7e60df042a9c0868
-    import FlowSign from 0x47864a1af5d67425
+    import FlowSign from 0xd1f1b4a8137294f4
 
     transaction (publicKey: String, ) {
       prepare(signer: AuthAccount) {
@@ -44,7 +44,7 @@ export async function createFlowAccount(publicKey: string): Promise<string> {
 			).borrow()!
 			.deposit(
 				from: <-fundingProvider.withdraw(
-					amount: 5.00 // Depositing 5Flow Per Account
+					amount: 2.00 // Depositing 2 Flow Per Account
 				)
 			)
 

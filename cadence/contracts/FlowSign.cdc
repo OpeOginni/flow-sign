@@ -49,6 +49,7 @@ access(all) contract FlowSign: NonFungibleToken {
     access(all) resource FlowSignContract {
         access(all) let id: UInt64
 
+        access(self) let contractTitle: String
         access(self) let contractText: String
         access(self) let potentialSigners: [Address]
         access(self) let expirationDate: UFix64
@@ -62,6 +63,7 @@ access(all) contract FlowSign: NonFungibleToken {
         access(all) var signatureCount: Int
         access(all) var valid: Bool
         init(
+            contractTitle: String,
             contractText: String,
             potentialSigners: [Address],
             expirationDate: UFix64,
@@ -76,6 +78,7 @@ access(all) contract FlowSign: NonFungibleToken {
             }
 
             self.id = FlowSign.contractCount + 1
+            self.contractTitle = contractTitle
             self.contractText = contractText
             self.potentialSigners = potentialSigners
             self.expirationDate = expirationDate
@@ -97,6 +100,8 @@ access(all) contract FlowSign: NonFungibleToken {
         access(contract) fun getID(): UInt64 {return self.id}
 
         access(contract) fun getContractText(): String {return self.contractText}
+
+        access(contract) fun getContractTitle(): String {return self.contractText}
 
         access(contract) fun getPotentialSigners(): [Address] {return self.potentialSigners}
 
@@ -158,6 +163,7 @@ access(all) contract FlowSign: NonFungibleToken {
         access(all) fun getContractId(): UInt64 
         access(all) fun getSignatureCount(): Int
         access(all) fun getContractText(): String
+        access(all) fun getContractTitle(): String
         access(all) fun getContractExpirationDate(): UFix64
 
     }
@@ -206,6 +212,12 @@ access(all) contract FlowSign: NonFungibleToken {
             var flowSignContract = (&FlowSign.contractById[self.flowSignContractId] as &FlowSign.FlowSignContract?)!
 
             return flowSignContract.getContractCreator()
+        }
+
+        access(all) fun getContractTitle(): String {
+            var flowSignContract = (&FlowSign.contractById[self.flowSignContractId] as &FlowSign.FlowSignContract?)!
+
+            return flowSignContract.getContractTitle()
         }
 
         access(all) fun getContractText(): String {
@@ -328,6 +340,7 @@ access(all) contract FlowSign: NonFungibleToken {
         /// Mint a Contract NFT
         ///
         access(all) fun createContract(
+            contractTitle: String,
             contractText: String,
             potentialSigners: [Address],
             expirationDate: UFix64,
@@ -340,7 +353,7 @@ access(all) contract FlowSign: NonFungibleToken {
             // Appends...Just Adds
             potentialSigners.append(contractCreator)
 
-            let newContract: @FlowSign.FlowSignContract <- create FlowSignContract(contractText: contractText, potentialSigners: potentialSigners, expirationDate: expirationDate, neededSignerAmount: neededSignerAmount, contractCreator: contractCreator)
+            let newContract: @FlowSign.FlowSignContract <- create FlowSignContract(contractTitle: contractTitle,contractText: contractText, potentialSigners: potentialSigners, expirationDate: expirationDate, neededSignerAmount: neededSignerAmount, contractCreator: contractCreator)
 
             FlowSign.contractById[newContract.id] <-! newContract
 

@@ -1,8 +1,6 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
-import { trpc } from "@/app/_trpc/client";
-import SignOutButton from "@/components/signOutButton";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { serverTrpc } from "@/app/_trpc/server";
 import { cn } from "@/lib/utils";

@@ -1,20 +1,16 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-import ContractForm from "@/components/createContractForm";
-import { createContractTransaction } from "@/server-functions/flowSignTransactions";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import ContractReadComponent from "@/components/contractTextComponent";
+
 import { serverTrpc } from "@/app/_trpc/server";
 
-export default async function CreateContractPage() {
+export default async function ContractPage() {
   const session = await getServerSession(authOptions);
 
   const currentUserEmail = session!.user?.email!;
 
   const user = await serverTrpc.getUserByEmail(currentUserEmail);
 
-  return (
-    <div>
-      <ContractForm userAddress={user.walletAddress!} />
-    </div>
-  );
+  return <ContractReadComponent userAddress={user.walletAddress!} />;
 }

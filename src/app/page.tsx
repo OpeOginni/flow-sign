@@ -30,12 +30,12 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="flex border-2 border-transparent text-center justify-center items-center bg-[#a7d7c5] text-[#ac2f63] h-80 w-[100%] hover:bg-[#ac2f63] hover:text-[#02ed8b]">
-          <h1 className="font-extrabold text-2xl">VALIDATE CONTRACTS ✅</h1>
-        </div>
-
         <div className="flex border-2 border-transparent text-center justify-center items-center  bg-[#a7d7c5] text-[#ac2f63] h-80 w-[100%] hover:bg-[#ac2f63] hover:text-[#02ed8b]">
           <h1 className="font-extrabold text-2xl">STORE CONTRACTS 🗄</h1>
+        </div>
+
+        <div className="flex border-2 border-transparent text-center justify-center items-center bg-[#a7d7c5] text-[#ac2f63] h-80 w-[100%] hover:bg-[#ac2f63] hover:text-[#02ed8b]">
+          <h1 className="font-extrabold text-2xl">VALIDATE CONTRACTS ✅</h1>
         </div>
       </div>
 

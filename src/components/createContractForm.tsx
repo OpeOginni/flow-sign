@@ -2,14 +2,14 @@
 
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { Calendar } from "./ui/calendar";
-import { createContractTransaction } from "@/server-functions/flowSign";
+import { createContractTransaction } from "@/server-functions/flowSignTransactions";
 
 interface ContractFormProps {
   userAddress: string;
 }
 
 interface ContractFormData {
-  contractName: string;
+  contractTitle: string;
   contractText: string;
   expirationDate: string;
   minSigners: number;
@@ -18,7 +18,7 @@ interface ContractFormData {
 
 const ContractForm: React.FC<ContractFormProps> = ({ userAddress }) => {
   const [formData, setFormData] = useState<ContractFormData>({
-    contractName: "",
+    contractTitle: "",
     contractText: "",
     expirationDate: "",
     minSigners: 1, // Initial minimum required signers
@@ -70,7 +70,7 @@ const ContractForm: React.FC<ContractFormProps> = ({ userAddress }) => {
     const epochExpirationDate = expirationDate.getTime() / 1000;
 
     const contractID = await createContractTransaction({
-      contractName: formData.contractName,
+      contractTitle: formData.contractTitle,
       contractText: formData.contractText,
       expirationDate: epochExpirationDate.toFixed(2),
       minSigners: formData.minSigners,
@@ -95,9 +95,9 @@ const ContractForm: React.FC<ContractFormProps> = ({ userAddress }) => {
             type="text"
             id="contract-name"
             className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
-            value={formData.contractName}
+            value={formData.contractTitle}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setFormData({ ...formData, contractName: e.target.value })
+              setFormData({ ...formData, contractTitle: e.target.value })
             }
             required
           />

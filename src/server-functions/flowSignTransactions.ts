@@ -10,7 +10,7 @@ config({
 })
 
 interface ContractCreationData {
-    contractName: string,
+    contractTitle: string,
     contractText: string,
     potentialSigners: string[],
     expirationDate: string,
@@ -22,15 +22,13 @@ export async function createContractTransaction(creationDetials: ContractCreatio
 
     const user = await serverTrpc.getUserByWalletAddress(creationDetials.userAddress)
 
-    console.log({ AUTH: { priv: user.accountPrivKey!, Index: "0", Address: user.walletAddress! }, creationDetials: creationDetials })
     try {
-
 
         const txHash = await mutate({
             cadence: `
-import FlowSign from 0x47864a1af5d67425
+import FlowSign from 0xd1f1b4a8137294f4
 
- transaction(contractText: String, potentialSigners: [Address], expirationDate: UFix64, neededSignerAmount: Int) {
+ transaction(contractTitle: String, contractText: String, potentialSigners: [Address], expirationDate: UFix64, neededSignerAmount: Int) {
 //    transaction(contractText: String) {
     prepare(acct: AuthAccount) {
 
@@ -39,12 +37,12 @@ import FlowSign from 0x47864a1af5d67425
 
     let flowSignCollection = acct.borrow<&FlowSign.Collection>(from: FlowSign.CollectionStoragePath) ?? panic("Could not Borrow Collection")
 
-    flowSignCollection.createContract(contractText: contractText, potentialSigners: potentialSigners, expirationDate: expirationDate, neededSignerAmount: neededSignerAmount)
+    flowSignCollection.createContract(contractTitle: contractTitle, contractText: contractText, potentialSigners: potentialSigners, expirationDate: expirationDate, neededSignerAmount: neededSignerAmount)
 
   }
 }
 `,
-            args: (arg, t) => [arg(creationDetials.contractText, t.String), arg(creationDetials.potentialSigners, t.Array(t.Address)),
+            args: (arg, t) => [arg(creationDetials.contractTitle, t.String), arg(creationDetials.contractText, t.String), arg(creationDetials.potentialSigners, t.Array(t.Address)),
             arg(creationDetials.expirationDate, t.UFix64), arg(creationDetials.minSigners.toString(), t.Int)],
             limit: 1000,
             payer: adminAuthorizationFunction,

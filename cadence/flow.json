@@ -1,5 +1,6 @@
 {
   "contracts": {
+    "FlowSign": "./contracts/FlowSign.cdc",
     "FlowToken": {
       "source": "./contracts/utility/FlowToken.cdc",
       "aliases": {
@@ -29,9 +30,6 @@
         "mainnet": "f233dcee88fe0abe",
         "testnet": "631e88ae7f1d7c20"
       }
-    },
-    "FlowSign": {
-      "source": "./contracts/FlowSign.cdc"
     }
   },
   "networks": {
@@ -50,6 +48,13 @@
     "emulator-account": {
       "address": "f8d6e0586b0a20c7",
       "key": "3af33a6a71acea977b97fc73807ad73d1058505ffcac3fcea406e2a83b170963"
+    },
+    "flow-sign-admin": {
+      "address": "d1f1b4a8137294f4",
+      "key": {
+        "type": "file",
+        "location": "flow-sign-admin.pkey"
+      }
     }
   },
   "deployments": {
@@ -57,7 +62,7 @@
       "emulator-account": ["NonFungibleToken", "FungibleToken", "MetadataViews"]
     },
     "testnet": {
-      "admin-testnet": ["FlowSign"]
+      "flow-sign-admin": ["FlowSign"]
     }
   }
 }

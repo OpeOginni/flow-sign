@@ -1,4 +1,4 @@
-import FlowSign from "../../contracts/FlowSign.cdc"
+import FlowSign from "../contracts/FlowSign.cdc"
 
 pub fun main(address: Address, userContractNftID: UInt64): {String: AnyStruct} {
 
@@ -14,6 +14,7 @@ pub fun main(address: Address, userContractNftID: UInt64): {String: AnyStruct} {
     let borrowedContract = collectionRef.borrowPublicContractNFT(id: userContractNftID) ?? panic("Collection Doesn't have Contract with ID".concat(userContractNftID.toString()))
 
     let contractDetails: {String: AnyStruct} = {
+        "ContractTitle": borrowedContract.getContractTitle(),
         "ContractCreator": borrowedContract.getContractCreator(),
         "ContractText": borrowedContract.getContractText(),
         "ContractStatus": borrowedContract.getContractStatus(),
