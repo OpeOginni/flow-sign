@@ -101,7 +101,7 @@ access(all) contract FlowSign: NonFungibleToken {
 
         access(contract) fun getContractText(): String {return self.contractText}
 
-        access(contract) fun getContractTitle(): String {return self.contractText}
+        access(contract) fun getContractTitle(): String {return self.contractTitle}
 
         access(contract) fun getPotentialSigners(): [Address] {return self.potentialSigners}
 

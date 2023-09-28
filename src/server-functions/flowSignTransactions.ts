@@ -26,7 +26,7 @@ export async function createContractTransaction(creationDetials: ContractCreatio
 
         const txHash = await mutate({
             cadence: `
-import FlowSign from 0xd1f1b4a8137294f4
+import FlowSign from 0xb7b7736e23079590
 
  transaction(contractTitle: String, contractText: String, potentialSigners: [Address], expirationDate: UFix64, neededSignerAmount: Int) {
 //    transaction(contractText: String) {
@@ -63,6 +63,63 @@ import FlowSign from 0xd1f1b4a8137294f4
         const contractID = systemEvent.data.id;
 
         return contractID
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+interface ContractSigningData {
+    contractID: number
+    userAddress: string
+}
+
+export async function signContractTransaction(signingDetails: ContractSigningData) {
+
+    const user = await serverTrpc.getUserByWalletAddress(signingDetails.userAddress)
+
+    try {
+
+        const txHash = await mutate({
+            cadence: `
+import FlowSign from 0xb7b7736e23079590
+
+transaction(contractID: UInt64) {
+
+    prepare(acct: AuthAccount) {
+  
+  
+      let flowSignCollection = acct.borrow<&FlowSign.Collection>(from: FlowSign.CollectionStoragePath) ?? panic("Could not Borrow Collection")
+  
+  
+      let flowSignContract = flowSignCollection.borrowContractNFT(id: contractID)?? panic("Could not Borrow Contract")
+  
+  
+      let value = flowSignContract.signContract()
+  
+  
+    }
+}
+`,
+            args: (arg, t) => [arg(signingDetails.contractID.toString(), t.UInt64)],
+            limit: 1000,
+            payer: adminAuthorizationFunction,
+            proposer: userAuthorizationFunction(user.accountPrivKey!, "0", user.walletAddress!),
+            authorizations: [userAuthorizationFunction(user.accountPrivKey!, "0", user.walletAddress!)],
+        });
+
+        console.log({ txHash });
+        const txResult = await tx(txHash).onceExecuted();
+        console.log({ txResult });
+        const { events } = txResult;
+
+
+        // we need to find system event `flow.AccountCreated` in list of events
+        const systemEvent = events.find((event: { type: string; }) => event.type.includes("ContractSigned"));
+
+        // then we can extract address from it
+        const signer = systemEvent.data.signer;
+
+        return signer
     } catch (e) {
         console.log(e)
     }

@@ -3,6 +3,7 @@
 import { serverTrpc } from "@/app/_trpc/server";
 import { adminAuthorizationFunction, userAuthorizationFunction } from "@/utils/authz-function";
 import { mutate, config, tx, query } from "@onflow/fcl";
+import { boolean } from "drizzle-orm/mysql-core";
 
 config({
     'accessNode.api': 'https://rest-testnet.onflow.org',
@@ -15,7 +16,7 @@ export async function getUserContractIDs(userAddress: string): Promise<[number]>
 
     const availableIDs: [number] = await query({
         cadence: `
-            import FlowSign from 0xd1f1b4a8137294f4
+            import FlowSign from 0xb7b7736e23079590
 
             /// This script gets the NFT IDs in a User's Collection, Each of the NFTs Have a Unique Contract Resource, and Each Contract Resource can have multple NFT Copies per Unique Signer
             pub fun main(address: Address): [UInt64] {
@@ -40,7 +41,7 @@ export async function getUserContractIDs(userAddress: string): Promise<[number]>
 
 }
 
-interface ContractDetailsData {
+export interface ContractDetailsData {
     "ContractTitle": string,
     "ContractCreator": string,
     "ContractText": string,
@@ -54,7 +55,7 @@ export async function getContractDetailsFromID(ownerAddress: string, ownerContra
 
     const contractDetails: ContractDetailsData = await query({
         cadence: `
-            import FlowSign from 0xd1f1b4a8137294f4
+            import FlowSign from 0xb7b7736e23079590
 
             pub fun main(address: Address, userContractNftID: UInt64): {String: AnyStruct} {
 
@@ -93,7 +94,7 @@ export async function getContractStatus(ownerAddress: string, ownerContractNftID
 
     const contractStatus: string = await query({
         cadence: `
-            import FlowSign from 0xd1f1b4a8137294f4
+            import FlowSign from 0xb7b7736e23079590
 
             pub fun main(address: Address, userContractNftID: UInt64): String {
 
@@ -124,7 +125,7 @@ export async function getContractSignatureCount(ownerAddress: string, ownerContr
 
     const contractSignatureCount: number = await query({
         cadence: `
-            import FlowSign from 0xd1f1b4a8137294f4
+            import FlowSign from 0xb7b7736e23079590
 
             pub fun main(address: Address, userContractNftID: UInt64): Int {
 
@@ -153,7 +154,7 @@ export async function getContractText(ownerAddress: string, ownerContractNftID: 
 
     const contractText: string = await query({
         cadence: `
-            import FlowSign from 0xd1f1b4a8137294f4
+            import FlowSign from 0xb7b7736e23079590
 
             pub fun main(address: Address, userContractNftID: UInt64): String {
 
@@ -178,3 +179,31 @@ export async function getContractText(ownerAddress: string, ownerContractNftID: 
     return contractText
 }
 
+export async function getContractSigners(ownerAddress: string, ownerContractNftID: number): Promise<Record<string, boolean>> {
+
+    const contractSignatures: Record<string, boolean> = await query({
+        cadence: `
+            import FlowSign from 0xb7b7736e23079590
+
+            pub fun main(address: Address, userContractNftID: UInt64): {Address: Bool} {
+
+                let acct = getAccount(address)
+            
+                let capability = acct.getCapability<&{FlowSign.FlowSignCollectionPublic}>(FlowSign.CollectionPublicPath)
+            
+                // borrow a reference from the capability
+                let collectionRef = capability.borrow()
+                        ?? panic("Could not borrow receiver reference")
+            
+                    
+                let borrowedContract = collectionRef.borrowPublicContractNFT(id: userContractNftID) ?? panic("Collection Doesn't have Contract with ID".concat(userContractNftID.toString()))
+            
+                return borrowedContract.getContractSigners()
+            }
+            `,
+        args: (arg, t) => [arg(ownerAddress, t.Address,), arg(ownerContractNftID.toString(), t.UInt64)],
+        limit: 1000,
+    })
+
+    return contractSignatures
+}

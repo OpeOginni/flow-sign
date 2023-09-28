@@ -88,9 +88,11 @@ export async function ContractPreviewCard(props: previewCardProps) {
               Already Signed
             </button>
           )}
-          <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mx-2">
-            Verify
-          </button>
+          <Link href={`/verify/${props.contractNftID}`}>
+            <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mx-2">
+              Verify
+            </button>
+          </Link>
         </div>
       </CardFooter>
     </Card>

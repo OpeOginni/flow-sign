@@ -22,7 +22,7 @@ export default async function MyContractsPage() {
   return (
     <div>
       <h1>My Contracts</h1>
-      <div className="flex flex-col">
+      <div className="grid grid-rows-1 md:grid-rows-3 lg:grid-rows-4 gap-4">
         {contractIDs.map((contractID) => {
           return (
             <div key={contractID}>

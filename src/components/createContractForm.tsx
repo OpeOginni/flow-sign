@@ -78,7 +78,7 @@ const ContractForm: React.FC<ContractFormProps> = ({ userAddress }) => {
       userAddress: userAddress,
     });
 
-    console.log(contractID);
+    console.log(formData);
   }
 
   return (
@@ -86,14 +86,14 @@ const ContractForm: React.FC<ContractFormProps> = ({ userAddress }) => {
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label
-            htmlFor="contract-name"
+            htmlFor="contract-title"
             className="block text-gray-700 font-bold mb-2"
           >
-            Contract Name:
+            Contract Title:
           </label>
           <input
             type="text"
-            id="contract-name"
+            id="contract-title"
             className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
             value={formData.contractTitle}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>

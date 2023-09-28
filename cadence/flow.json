@@ -1,68 +1,74 @@
 {
-  "contracts": {
-    "FlowSign": "./contracts/FlowSign.cdc",
-    "FlowToken": {
-      "source": "./contracts/utility/FlowToken.cdc",
-      "aliases": {
-        "emulator": "0ae53cb6e3f42a79",
-        "mainnet": "1654653399040a61",
-        "testnet": "7e60df042a9c0868"
-      }
-    },
-    "FungibleToken": {
-      "source": "./contracts/utility/FungibleToken.cdc",
-      "aliases": {
-        "emulator": "ee82856bf20e2aa6",
-        "mainnet": "f233dcee88fe0abe",
-        "testnet": "9a0766d93b6608b7"
-      }
-    },
-    "MetadataViews": {
-      "source": "./contracts/utility/MetadataViews.cdc",
-      "aliases": {
-        "mainnet": "f233dcee88fe0abe",
-        "testnet": "631e88ae7f1d7c20"
-      }
-    },
-    "NonFungibleToken": {
-      "source": "./contracts/utility/NonFungibleToken.cdc",
-      "aliases": {
-        "mainnet": "f233dcee88fe0abe",
-        "testnet": "631e88ae7f1d7c20"
-      }
-    }
-  },
-  "networks": {
-    "emulator": "127.0.0.1:3569",
-    "mainnet": "access.mainnet.nodes.onflow.org:9000",
-    "testnet": "access.devnet.nodes.onflow.org:9000"
-  },
-  "accounts": {
-    "admin-testnet": {
-      "address": "47864a1af5d67425",
-      "key": {
-        "type": "file",
-        "location": "admin-testnet.pkey"
-      }
-    },
-    "emulator-account": {
-      "address": "f8d6e0586b0a20c7",
-      "key": "3af33a6a71acea977b97fc73807ad73d1058505ffcac3fcea406e2a83b170963"
-    },
-    "flow-sign-admin": {
-      "address": "d1f1b4a8137294f4",
-      "key": {
-        "type": "file",
-        "location": "flow-sign-admin.pkey"
-      }
-    }
-  },
-  "deployments": {
-    "emulator": {
-      "emulator-account": ["NonFungibleToken", "FungibleToken", "MetadataViews"]
-    },
-    "testnet": {
-      "flow-sign-admin": ["FlowSign"]
-    }
-  }
+	"contracts": {
+		"FlowSign": "./contracts/FlowSign.cdc",
+		"FlowToken": {
+			"source": "./contracts/utility/FlowToken.cdc",
+			"aliases": {
+				"emulator": "0ae53cb6e3f42a79",
+				"mainnet": "1654653399040a61",
+				"testnet": "7e60df042a9c0868"
+			}
+		},
+		"FungibleToken": {
+			"source": "./contracts/utility/FungibleToken.cdc",
+			"aliases": {
+				"emulator": "ee82856bf20e2aa6",
+				"mainnet": "f233dcee88fe0abe",
+				"testnet": "9a0766d93b6608b7"
+			}
+		},
+		"MetadataViews": {
+			"source": "./contracts/utility/MetadataViews.cdc",
+			"aliases": {
+				"mainnet": "f233dcee88fe0abe",
+				"testnet": "631e88ae7f1d7c20"
+			}
+		},
+		"NonFungibleToken": {
+			"source": "./contracts/utility/NonFungibleToken.cdc",
+			"aliases": {
+				"mainnet": "f233dcee88fe0abe",
+				"testnet": "631e88ae7f1d7c20"
+			}
+		}
+	},
+	"networks": {
+		"emulator": "127.0.0.1:3569",
+		"mainnet": "access.mainnet.nodes.onflow.org:9000",
+		"testnet": "access.devnet.nodes.onflow.org:9000"
+	},
+	"accounts": {
+		"admin-testnet": {
+			"address": "47864a1af5d67425",
+			"key": {
+				"type": "file",
+				"location": "admin-testnet.pkey"
+			}
+		},
+		"emulator-account": {
+			"address": "f8d6e0586b0a20c7",
+			"key": "3af33a6a71acea977b97fc73807ad73d1058505ffcac3fcea406e2a83b170963"
+		},
+		"flow-sign-admin": {
+			"address": "b7b7736e23079590",
+			"key": {
+				"type": "file",
+				"location": "flow-sign-admin.pkey"
+			}
+		}
+	},
+	"deployments": {
+		"emulator": {
+			"emulator-account": [
+				"NonFungibleToken",
+				"FungibleToken",
+				"MetadataViews"
+			]
+		},
+		"testnet": {
+			"admin-testnet": [
+				"FlowSign"
+			]
+		}
+	}
 }
