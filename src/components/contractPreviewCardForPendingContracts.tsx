@@ -82,20 +82,12 @@ export async function ContractPreviewCardForPendingContracts(
       </CardContent>
       <CardFooter>
         <div className="flex justify-center mt-4">
-          {1 > 0 ? (
-            <Link href={`/contract/${props.contractNftID}`}>
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mx-2">
-                Sign
-              </button>
-            </Link>
-          ) : (
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mx-2"
-              disabled
-            >
-              Already Signed
+          <Link href={`/contract/${props.contractNftID}`}>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mx-2">
+              Sign
             </button>
-          )}
+          </Link>
+
           <Link href={`/verify/${props.contractNftID}`}>
             <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mx-2">
               Verify

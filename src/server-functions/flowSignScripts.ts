@@ -76,7 +76,7 @@ export async function getContractDetailsFromID(ownerAddress: string, ownerContra
                     "ContractText": borrowedContract.getContractText(),
                     "ContractStatus": borrowedContract.getContractStatus(),
                     "ContractPotentialSigners": borrowedContract.getPotentialSigners(),
-                    "ContractSigners": borrowedContract.getPotentialSigners(),
+                    "ContractSigners": borrowedContract.getContractSigners(),
                     "ContractExpirationDate": borrowedContract.getContractExpirationDate()            }
             
                 return contractDetails

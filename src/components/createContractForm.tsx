@@ -1,8 +1,13 @@
 "use client";
 
 import React, { useState, ChangeEvent, FormEvent } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import { ToastAction } from "@/components/ui/toast";
+import { Textarea } from "@/components/ui/textarea";
+
 import { Calendar } from "./ui/calendar";
 import { createContractTransaction } from "@/server-functions/flowSignTransactions";
+import Link from "next/link";
 
 interface ContractFormProps {
   userAddress: string;
@@ -17,6 +22,8 @@ interface ContractFormData {
 }
 
 const ContractForm: React.FC<ContractFormProps> = ({ userAddress }) => {
+  const { toast } = useToast();
+
   const [formData, setFormData] = useState<ContractFormData>({
     contractTitle: "",
     contractText: "",
@@ -24,6 +31,8 @@ const ContractForm: React.FC<ContractFormProps> = ({ userAddress }) => {
     minSigners: 1, // Initial minimum required signers
     signers: [""], // Initial signer
   });
+
+  const [loading, setLoading] = useState<boolean>(false); // Add loading state
 
   const handleAddSigner = () => {
     setFormData((prevData) => ({
@@ -54,9 +63,30 @@ const ContractForm: React.FC<ContractFormProps> = ({ userAddress }) => {
     });
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    createContract(formData, userAddress);
+    try {
+      setLoading(true); // Set loading state to true while processing
+      await createContract(formData, userAddress);
+
+      return toast({
+        title: "Contract Created",
+        description: "Check Pending Contracts",
+        action: (
+          <ToastAction altText="Sign Contract">
+            <Link href={"/pending-contracts"}>Sign Contract</Link>
+          </ToastAction>
+        ),
+      });
+    } catch (e: any) {
+      console.log(e);
+
+      return toast({
+        title: "Contract Creation Error",
+        description: e.message,
+        variant: "destructive",
+      });
+    }
   };
 
   async function createContract(
@@ -109,7 +139,7 @@ const ContractForm: React.FC<ContractFormProps> = ({ userAddress }) => {
           >
             Contract Text:
           </label>
-          <textarea
+          <Textarea
             id="contract-text"
             className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
             rows={5}
@@ -118,7 +148,7 @@ const ContractForm: React.FC<ContractFormProps> = ({ userAddress }) => {
               setFormData({ ...formData, contractText: e.target.value })
             }
             required
-          ></textarea>
+          ></Textarea>
         </div>
         <div className="mb-4">
           <label
@@ -188,12 +218,22 @@ const ContractForm: React.FC<ContractFormProps> = ({ userAddress }) => {
           </button>
         </div>
         <div className="mb-4">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Submit
-          </button>
+          {loading ? (
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              disabled
+            >
+              Creating...
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Submit
+            </button>
+          )}
         </div>
       </form>
     </div>

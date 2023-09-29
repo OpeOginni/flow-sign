@@ -6,15 +6,7 @@ import { Montserrat, Poppins } from "next/font/google";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
-import {
-  Code,
-  ImageIcon,
-  LayoutDashboard,
-  FileCheck2,
-  PenTool,
-  ScrollText,
-  ShieldCheck,
-} from "lucide-react";
+import { User, PenTool, ScrollText, ShieldCheck } from "lucide-react";
 
 const montserrat = Montserrat({ weight: "600", subsets: ["latin"] });
 const poppins = Poppins({ weight: "600", subsets: ["latin"] });
@@ -34,7 +26,7 @@ const routes = [
   },
   {
     label: "My Contracts",
-    icon: ShieldCheck,
+    icon: User,
     href: "/my-contracts",
     color: "text-[#ac2f63]",
   },

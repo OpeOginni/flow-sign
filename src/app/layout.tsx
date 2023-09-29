@@ -4,6 +4,7 @@ import { Inter, Poppins } from "next/font/google";
 import AuthProvider from "./AuthProvider";
 import Provider from "./_trpc/Provider";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 const poppins = Poppins({ weight: "600", subsets: ["latin"] });
@@ -23,6 +24,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={cn(poppins.className, "bg-[#dff6ed]")}>
           <Provider>{children}</Provider>
+          <Toaster />
         </body>
       </html>
     </AuthProvider>
