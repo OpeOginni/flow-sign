@@ -19,6 +19,13 @@ export const appRouter = router({
             .from(users)
             .where(eq(users.email, opts.input));
         return (user[0])
+    }),
+    getUserByWalletAddress: publicProcedure.input(String).query(async (opts) => {
+        const user = await db
+            .select()
+            .from(users)
+            .where(eq(users.walletAddress, opts.input));
+        return (user[0])
     })
 })
 

@@ -1,6 +1,6 @@
 import FlowSign from "../../contracts/FlowSign.cdc"
 
-pub fun main(address: Address, contractID: UInt64): String {
+pub fun main(address: Address, userContractNftID: UInt64): String {
 
     let acct = getAccount(address)
 
@@ -13,7 +13,7 @@ pub fun main(address: Address, contractID: UInt64): String {
             ?? panic("Could not borrow receiver reference")
 
         
-    let borrowedContract = collectionRef.borrowPublicContractNFT(id: contractID) ?? panic("Collection Doesn't have Contract with ID".concat(contractID.toString()))
+    let borrowedContract = collectionRef.borrowPublicContractNFT(id: userContractNftID) ?? panic("Collection Doesn't have Contract with ID".concat(contractID.toString()))
 
     return borrowedContract.getContractStatus()
 }

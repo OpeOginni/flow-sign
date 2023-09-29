@@ -1,4 +1,4 @@
-import FlowSign from "../../contracts/FlowSign.cdc"
+import FlowSign from "../contracts/FlowSign.cdc"
 
 pub fun main(address: Address, userContractNftID: UInt64): Int {
 

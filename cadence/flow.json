@@ -1,5 +1,6 @@
 {
   "contracts": {
+    "FlowSign": "./contracts/FlowSign.cdc",
     "FlowToken": {
       "source": "./contracts/utility/FlowToken.cdc",
       "aliases": {
@@ -20,14 +21,14 @@
       "source": "./contracts/utility/MetadataViews.cdc",
       "aliases": {
         "mainnet": "f233dcee88fe0abe",
-        "testnet": "9a0766d93b6608b7"
+        "testnet": "631e88ae7f1d7c20"
       }
     },
     "NonFungibleToken": {
       "source": "./contracts/utility/NonFungibleToken.cdc",
       "aliases": {
         "mainnet": "f233dcee88fe0abe",
-        "testnet": "9a0766d93b6608b7"
+        "testnet": "631e88ae7f1d7c20"
       }
     }
   },
@@ -37,21 +38,24 @@
     "testnet": "access.devnet.nodes.onflow.org:9000"
   },
   "accounts": {
-    "admin-testnet": {
-      "address": "47864a1af5d67425",
-      "key": {
-        "type": "file",
-        "location": "admin-testnet.pkey"
-      }
-    },
     "emulator-account": {
       "address": "f8d6e0586b0a20c7",
       "key": "3af33a6a71acea977b97fc73807ad73d1058505ffcac3fcea406e2a83b170963"
+    },
+    "flow-sign-admin": {
+      "address": "b7b7736e23079590",
+      "key": {
+        "type": "file",
+        "location": "flow-sign-admin.pkey"
+      }
     }
   },
   "deployments": {
     "emulator": {
       "emulator-account": ["NonFungibleToken", "FungibleToken", "MetadataViews"]
+    },
+    "testnet": {
+      "flow-sign-admin": ["FlowSign"]
     }
   }
 }
