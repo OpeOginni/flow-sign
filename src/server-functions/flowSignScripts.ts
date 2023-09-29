@@ -47,7 +47,7 @@ export interface ContractDetailsData {
     "ContractText": string,
     "ContractStatus": string,
     "ContractPotentialSigners": [number],
-    "ContractSigners": [{ string: boolean }],
+    "ContractSigners": Record<string, boolean>,
     "ContractExpirationDate": string
 }
 

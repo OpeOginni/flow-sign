@@ -1,9 +1,7 @@
 import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { serverTrpc } from "@/app/_trpc/server";
-import { cn } from "@/lib/utils";
 import { getUserContractIDs } from "@/server-functions/flowSignScripts";
 import { ContractPreviewCard } from "@/components/contractPreviewCard";
 

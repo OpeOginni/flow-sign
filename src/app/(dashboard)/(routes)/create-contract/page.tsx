@@ -1,8 +1,7 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import ContractForm from "@/components/createContractForm";
-import { createContractTransaction } from "@/server-functions/flowSignTransactions";
 import { serverTrpc } from "@/app/_trpc/server";
 
 export default async function CreateContractPage() {

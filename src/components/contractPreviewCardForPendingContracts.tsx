@@ -16,7 +16,9 @@ interface previewCardProps {
   contractNftID: number;
 }
 
-export async function ContractPreviewCard(props: previewCardProps) {
+export async function ContractPreviewCardForPendingContracts(
+  props: previewCardProps
+) {
   const contractDetails = await getContractDetailsFromID(
     props.ownerAddress,
     props.contractNftID
@@ -31,6 +33,11 @@ export async function ContractPreviewCard(props: previewCardProps) {
   };
 
   console.log(contractDetails);
+
+  // If the User has already Signed this contract it wont show in the Preview Part
+  if (contractDetails.ContractSigners.hasOwnProperty(props.ownerAddress)) {
+    return;
+  }
 
   return (
     <Card className="relative w-[350px] h-[400px]">

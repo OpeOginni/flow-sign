@@ -1,13 +1,16 @@
 import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import ContractReadComponent from "@/components/contractTextComponent";
-
 import { serverTrpc } from "@/app/_trpc/server";
 import VerifyContractComponent from "@/components/contractVerificationComponent";
 
 export default async function ContractVerifyPage() {
   const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect("/api/auth/signin");
+  }
 
   const currentUserEmail = session!.user?.email!;
 
