@@ -30,6 +30,34 @@
         "mainnet": "f233dcee88fe0abe",
         "testnet": "631e88ae7f1d7c20"
       }
+    },
+    "HybridCustody": {
+      "source": "./contracts/hybrid-custody/HybridCustody.cdc",
+      "aliases": {
+        "emulator": "f233dcee88fe0abe",
+        "testnet": "0x294e44e1ec6993c6"
+      }
+    },
+    "CapabilityDelegator": {
+      "source": "./contracts/hybrid-custody/CapabilityDelegator.cdc",
+      "aliases": {
+        "emulator": "f233dcee88fe0abe",
+        "testnet": "0x294e44e1ec6993c6"
+      }
+    },
+    "CapabilityFactory": {
+      "source": "./contracts/hybrid-custody/CapabilityFactory.cdc",
+      "aliases": {
+        "emulator": "f233dcee88fe0abe",
+        "testnet": "0x294e44e1ec6993c6"
+      }
+    },
+    "CapabilityFilter": {
+      "source": "./contracts/hybrid-custody/CapabilityFilter.cdc",
+      "aliases": {
+        "emulator": "f233dcee88fe0abe",
+        "testnet": "0x294e44e1ec6993c6"
+      }
     }
   },
   "networks": {
@@ -52,7 +80,15 @@
   },
   "deployments": {
     "emulator": {
-      "emulator-account": ["NonFungibleToken", "FungibleToken", "MetadataViews"]
+      "emulator-account": [
+        "NonFungibleToken",
+        "FungibleToken",
+        "MetadataViews",
+        "HybridCustody",
+        "CapabilityDelegator",
+        "CapabilityFactory",
+        "CapabilityFilter"
+      ]
     },
     "testnet": {
       "flow-sign-admin": ["FlowSign"]
