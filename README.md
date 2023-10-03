@@ -1,19 +1,54 @@
-### LW3 Hackathon
+# Flow Sign - A Dapp for Contract Management on the Flow Blockchain
 
-## Introduction to `Flow Sign`
+## Introduction
 
-Flow Sign is a Dapp Built on the Flow Blockchain that lets individuals create Contracts, share them with other users to sing the contract, store contracts and verify those contract. Flow Sign tried to solve the issue of trust in the Commercial world, as Pysical Paper Contracts can be easier destroyed, these contract are minted as NFTs on the Flow Blockchain, and a copy is distributed to the Collection of everyone who is called on to sign on the contract.
+Flow Sign is a decentralized application (Dapp) built on the Flow Blockchain, designed to facilitate contract creation, sharing, storage, and verification. In a world where trust is paramount in commercial transactions, Flow Sign offers a secure and efficient solution by converting contracts into non-fungible tokens (NFTs) on the Flow Blockchain. Copies of these contracts are distributed to all parties involved in the contract, ensuring transparency and immutability.
 
-## Account Abstraction and Hybrid - Custody
+## Features
 
-Flow Sign was my chance to really dig deep and test out the Account Abstraction and Hybrid - Custody feature of Flow. Users can sign up using their Gmails accouns are created for them on the backend, this makes running of transactions easier as users don't have to approve every transaction being made and users also don't have to worry about gas fees for these transactions.
+### Account Abstraction and Hybrid-Custody
 
-Some users still would like to have the contracts on their personal Non-Custodial Wallet, this is possible thanls to Hybrid-Custody, on FlowSign users can link their Non-Custodial wallets to the wallets created for them, giving them access to their FlowSign Contracts, to Check and Verify even without logging in to the Dapp.
+Flow Sign incorporates advanced features like Account Abstraction and Hybrid-Custody, enhancing the user experience and security.
+
+#### Account Abstraction
+
+Users can easily sign up using their Gmail accounts, and Flow Sign automatically creates accounts for them on the backend. This streamlines the transaction process, as users do not need to approve each individual transaction, eliminating the need for constant user interaction. Additionally, users are relieved from worrying about gas fees, making Flow Sign more user-friendly.
+
+#### Hybrid-Custody
+
+For users who prefer to have contracts stored on their personal non-custodial wallets, Flow Sign provides the option of Hybrid-Custody. Users can link their non-custodial wallets to the wallets created for them on Flow Sign. This grants them access to their Flow Sign contracts, enabling them to check and verify contracts even without logging into the Dapp.
 
 ## Installation and Setup
 
-- Clone this repository
-- Install dependecies using `npm install`
-- Create a `.env` file and useing the variables in the `.env.example` file fill in the needed Variables
-- You can decide to run your local postgres docker image using the `docker-compose` file provided
-- Start the development server with `npm run dev`
+Follow these steps to set up Flow Sign on your local environment:
+
+1. Clone this repository:
+
+   ```shell
+   git clone https://github.com/OpeOginni/flow-sign.git
+   ```
+
+2. Install dependencies:
+
+   ```shell
+   npm install
+   ```
+
+3. Create a `.env` file and fill in the required variables using the template in `.env.example`.
+4. Optionally, you can run a local PostgreSQL database using the provided docker-compose file:
+
+   ```shell
+   docker-compose up -d
+   ```
+
+5. Start the development server:
+
+   ```shell
+   npm run dev
+   ```
+
+   Now, Flow Sign should be up and running on your local machine.
+
+### Contribution
+
+Contributions to Flow Sig are welcomen. Feel free to open issues, submit pull requests, or suggest new features. Together, we can make Flow Sign even better!

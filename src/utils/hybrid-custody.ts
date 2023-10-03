@@ -2,8 +2,11 @@ import { mutate, config, tx, decode, send } from "@onflow/fcl";
 import { adminAuthorizationFunction, userAuthorizationFunction } from './authz-function'
 
 config({
-    'accessNode.api': 'https://rest-testnet.onflow.org',
-    'discovery.wallet': `https://fcl-discovery.onflow.org/testnet/authn`
+    "app.detail.title": "Flow Sign",
+    "app.detail.icon":
+        "https://raw.githubusercontent.com/OpeOginni/flow-sign/main/public/FlowSign.png",
+    "accessNode.api": "https://rest-testnet.onflow.org",
+    "discovery.wallet": `https://fcl-discovery.onflow.org/testnet/authn`,
 })
 
 
