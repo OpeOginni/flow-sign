@@ -34,8 +34,6 @@ export default function ContractReadComponent(props: { userAddress: string }) {
         userAddress: userAddress,
       });
 
-      console.log(signer);
-
       setButtonLoading(false);
 
       return toast({

@@ -70,9 +70,7 @@ export async function createFlowAccount(publicKey: string): Promise<string> {
     authz: adminAuthorizationFunction,
   });
 
-  console.log({ txHash });
   const txResult = await tx(txHash).onceExecuted();
-  console.log({ txResult });
   const { events } = txResult;
 
 

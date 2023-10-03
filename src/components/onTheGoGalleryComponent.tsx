@@ -24,10 +24,6 @@ export default async function OnTheGoGallery(props: { user: UserType }) {
     props.user.addr
   );
 
-  console.log("Componnent");
-  console.log(props.user.addr);
-  console.log(childWallet);
-
   if (!childWallet) {
     return (
       <div>

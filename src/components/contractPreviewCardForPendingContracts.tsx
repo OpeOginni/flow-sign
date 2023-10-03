@@ -25,14 +25,9 @@ export async function ContractPreviewCardForPendingContracts(
   );
 
   const formatEpochToDate = (epochTime: string) => {
-    console.log(epochTime);
-
     const date = new Date(Number(epochTime) * 1000);
-    console.log(date);
     return date.toDateString(); // This will display the date in a human-readable format
   };
-
-  console.log(contractDetails);
 
   // If the User has already Signed this contract it wont show in the Preview Part
   if (contractDetails.ContractSigners.hasOwnProperty(props.ownerAddress)) {

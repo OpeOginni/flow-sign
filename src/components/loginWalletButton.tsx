@@ -11,7 +11,6 @@ export default function LoginWalletButton() {
     <div>
       <button
         onClick={async () => {
-          console.log("click");
           fcl.authenticate();
         }}
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -21,7 +20,6 @@ export default function LoginWalletButton() {
 
       <button
         onClick={() => {
-          console.log("click");
           fcl.unauthenticate();
         }}
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"

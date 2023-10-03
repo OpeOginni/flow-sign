@@ -95,8 +95,6 @@ const ContractForm: React.FC<ContractFormProps> = ({ userAddress }) => {
   ) {
     const expirationDate = new Date(formData.expirationDate);
 
-    console.log(expirationDate);
-
     const epochExpirationDate = expirationDate.getTime() / 1000;
 
     const contractID = await createContractTransaction({
@@ -107,8 +105,6 @@ const ContractForm: React.FC<ContractFormProps> = ({ userAddress }) => {
       potentialSigners: formData.signers,
       userAddress: userAddress,
     });
-
-    console.log(formData);
   }
 
   return (
