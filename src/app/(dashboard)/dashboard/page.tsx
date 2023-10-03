@@ -30,6 +30,10 @@ export default async function Dashboard() {
           </span>{" "}
           and is kept in the wallet of every signer
         </h1>
+
+        <h1 className={cn("text-md")}>
+          Your Account Address is: {user.walletAddress}
+        </h1>
       </div>
 
       <div className="flex w-3/4 pt-4 pb-9 items-center justify-center flex-col">
