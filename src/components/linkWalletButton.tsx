@@ -15,6 +15,9 @@ import {
   publishChildAccount,
   setupChildAccount,
 } from "@/utils/hybrid-custody";
+import { trpc } from "@/app/_trpc/client";
+import { useToast } from "@/components/ui/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 interface LinkWalletButtonProps {
   flowSignWalletAddress: string;
@@ -27,7 +30,12 @@ interface FclUserType {
 }
 
 export default function LinkWalletButton(props: LinkWalletButtonProps) {
+  const { toast } = useToast();
+
   const [user, setUser] = useState({ loggedIn: null, addr: "" });
+  const [loading, setLoading] = useState<boolean>(false); // Add loading state
+
+  const linkedWallet = trpc.updateLinkedWallet.useMutation();
 
   useEffect(() => {
     const unsubscribe = fcl.currentUser.subscribe((user: any) => setUser(user));
@@ -36,29 +44,49 @@ export default function LinkWalletButton(props: LinkWalletButtonProps) {
 
   async function walletLinking() {
     try {
-      console.log(props);
+      setLoading(true); // Set loading state to true while processing
 
       console.log(user);
 
-      // await setupChildAccount(
-      //   props.flowSignWalletPrivateKey,
-      //   props.flowSignWalletAddress
-      // );
+      await setupChildAccount(
+        props.flowSignWalletPrivateKey,
+        props.flowSignWalletAddress
+      );
 
-      console.log("Child Account Setup");
+      toast({
+        title: "Child Account Created",
+      });
 
       await publishChildAccount(
         user.addr,
         props.flowSignWalletPrivateKey,
         props.flowSignWalletAddress
       );
-      console.log("Child Published");
+
+      toast({
+        title: "Child Account Published",
+      });
 
       await claimChildAccount(await fcl.authz, props.flowSignWalletAddress);
 
-      console.log("Child Claimed");
-    } catch (e) {
+      toast({
+        title: "Child Account Claimed",
+      });
+
+      const newUser = linkedWallet.mutate({
+        accountAddress: props.flowSignWalletAddress,
+        linkedCustodialAddress: user.addr,
+      });
+
+      console.log("User Updated", newUser);
+    } catch (e: any) {
       console.log(e);
+
+      return toast({
+        title: "Account Linking Error",
+        description: e.message,
+        variant: "destructive",
+      });
     }
   }
   return (
@@ -70,21 +98,33 @@ export default function LinkWalletButton(props: LinkWalletButtonProps) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogDescription>
+          <DialogDescription className="flex justify-center items-center">
             {user.loggedIn ? (
               <>
-                <button
-                  onClick={async () => await walletLinking()}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                >
-                  Link Wallet
-                </button>
-                <button
-                  onClick={() => fcl.unauthenticate()}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                >
-                  Log Out Wallet
-                </button>
+                <div className="grid grid-cols-2 gap-10">
+                  {loading ? (
+                    <button
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                      disabled
+                    >
+                      Linking...
+                    </button>
+                  ) : (
+                    <button
+                      onClick={async () => await walletLinking()}
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Link Wallet
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => fcl.unauthenticate()}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Log Out Wallet
+                  </button>
+                </div>
               </>
             ) : (
               <button

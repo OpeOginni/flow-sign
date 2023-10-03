@@ -63,7 +63,7 @@ export async function setupChildAccount(flowSignAccountPrivateKey: string, flowS
 }
 
 export async function publishChildAccount(userWalletAddress: string, flowSignAccountPrivateKey: string, flowSignAccountAddress: string) {
-    await mutate({
+    const txHash = await mutate({
         cadence: `
         import HybridCustody from 0x294e44e1ec6993c6
         import CapabilityFactory from 0x294e44e1ec6993c6
@@ -88,16 +88,22 @@ export async function publishChildAccount(userWalletAddress: string, flowSignAcc
         limit: 1000,
         authz: userAuthorizationFunction(flowSignAccountPrivateKey, "0", flowSignAccountAddress)
     })
+
+    console.log({ txHash });
+    const txResult = await tx(txHash).onceExecuted();
+    console.log({ txResult });
+    console.log("Publisheddd")
 }
 
 export async function claimChildAccount(userAuthFunction: Function, childAccountAddress: string) {
-    await mutate({
+    const txHash = await mutate({
         cadence: `
         import HybridCustody from 0x294e44e1ec6993c6
         import CapabilityFactory from 0x294e44e1ec6993c6
         import CapabilityFilter from 0x294e44e1ec6993c6
         import MetadataViews from 0x631e88ae7f1d7c20
-        import FlowSign from 0xb7b7736e23079590
+        import FlowSign from 0xdf8619a80f083cff
+        import NonFungibleToken from 0x631e88ae7f1d7c20
 
         transaction(childAddress: Address, name: String, description: String, thumbnailURL: String) {
             prepare(acct: AuthAccount) {
@@ -128,21 +134,21 @@ export async function claimChildAccount(userAuthFunction: Function, childAccount
                 /** --- Setup parent's Flow Sign.Collection --- */
                 //
                 // Set up FlowSign.Collection if it doesn't exist
-                if parent.borrow<&FlowSign.Collection>(from: FlowSign.CollectionStoragePath) == nil {
+                if acct.borrow<&FlowSign.Collection>(from: FlowSign.CollectionStoragePath) == nil {
                     // Create a new empty collection
                     let collection <- FlowSign.createEmptyCollection()
                     // save it to the account
-                    parent.save(<-collection, to: FlowSign.CollectionStoragePath)
+                    acct.save(<-collection, to: FlowSign.CollectionStoragePath)
                 }
                 // Check for public capabilities
-                if !parent.getCapability<
+                if !acct.getCapability<
                         &FlowSign.Collection{NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic, FlowSign.FlowSignCollectionPublic}
                     >(
                         FlowSign.CollectionPublicPath
                     ).check() {
                     // create a public capability for the collection
-                    parent.unlink(FlowSign.CollectionPublicPath)
-                    parent.link<
+                    acct.unlink(FlowSign.CollectionPublicPath)
+                    acct.link<
                         &FlowSign.Collection{NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic, FlowSign.FlowSignCollectionPublic}
                     >(
                         FlowSign.CollectionPublicPath,
@@ -156,4 +162,10 @@ export async function claimChildAccount(userAuthFunction: Function, childAccount
         limit: 1000,
         authz: userAuthFunction
     })
+
+    console.log({ txHash });
+    const txResult = await tx(txHash).onceExecuted();
+    console.log({ txResult });
+    console.log("Claimed")
+
 }

@@ -1,4 +1,5 @@
 import NonFungibleToken from "./utility/NonFungibleToken.cdc";
+import MetadataViews from "./utility/MetadataViews.cdc";
 
 access(all) contract FlowSign: NonFungibleToken {
 
@@ -173,7 +174,7 @@ access(all) contract FlowSign: NonFungibleToken {
 
     /// A FlowSign NFT
     ///
-    access(all) resource NFT: NonFungibleToken.INFT, FlowSignNFTPublic {
+    access(all) resource NFT: NonFungibleToken.INFT, FlowSignNFTPublic, MetadataViews.Resolver {
         access(all) let id: UInt64
 
         access(self) let flowSignContractId: UInt64
@@ -255,6 +256,65 @@ access(all) contract FlowSign: NonFungibleToken {
 
             return flowSignContract.getExpirationDate()
         }
+
+        /// Function that returns all the Metadata Views implemented by a Non Fungible Token
+        ///
+        /// @return An array of Types defining the implemented views. This value will be used by
+        ///         developers to know which parameter to pass to the resolveView() method.
+        ///
+        access(all) fun getViews(): [Type] {
+            return [
+                Type<MetadataViews.Display>(),
+                Type<MetadataViews.NFTCollectionData>(),
+                Type<MetadataViews.NFTCollectionDisplay>()
+            ]
+        }
+
+        /// Function that resolves a metadata view for this token.
+        ///
+        /// @param view: The Type of the desired view.
+        /// @return A structure representing the requested view.
+        ///
+        access(all) fun resolveView(_ view: Type): AnyStruct? {
+            switch view {
+                case Type<MetadataViews.Display>():
+                    return MetadataViews.Display(
+                        name: "FlowSign Contract",
+                        description: "Copy Contract from Main Contract wit ID: ".concat(self.flowSignContractId.toString()),
+                        thumbnail: MetadataViews.HTTPFile(
+                            url: "https://raw.githubusercontent.com/OpeOginni/flow-sign/main/public/FlowSign_copy.png"
+                        )
+                    )
+                case Type<MetadataViews.NFTCollectionData>():
+                    return MetadataViews.NFTCollectionData(
+                        storagePath: FlowSign.CollectionStoragePath,
+                        publicPath: FlowSign.CollectionPublicPath,
+                        providerPath: /private/flowSignNFTCollection,
+                        publicCollection: Type<&FlowSign.Collection{FlowSign.FlowSignCollectionPublic}>(),
+                        publicLinkedType: Type<&FlowSign.Collection{FlowSign.FlowSignCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Receiver,MetadataViews.ResolverCollection}>(),
+                        providerLinkedType: Type<&FlowSign.Collection{FlowSign.FlowSignCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Provider,MetadataViews.ResolverCollection}>(),
+                        createEmptyCollectionFunction: (fun (): @NonFungibleToken.Collection {
+                            return <-FlowSign.createEmptyCollection()
+                        })
+                    )
+                case Type<MetadataViews.NFTCollectionDisplay>():
+                    let media = MetadataViews.Media(
+                        file: MetadataViews.HTTPFile(
+                            url: "https://raw.githubusercontent.com/OpeOginni/flow-sign/main/public/FlowSign.png"
+                        ),
+                        mediaType: "image/png"
+                    )
+                    return MetadataViews.NFTCollectionDisplay(
+                        name: "The Flow Sign Collection",
+                        description: "This collection holds all Flow Sign Contracts you have been added too",
+                        externalURL: MetadataViews.ExternalURL("https://github.com/OpeOginni/flow-sign/tree/main"),
+                        squareImage: media,
+                        bannerImage: media,
+                        socials: {}
+                    )
+            }
+            return nil
+        }
     }
     //------------------------------------------------------------
     // Collection
@@ -275,8 +335,8 @@ access(all) contract FlowSign: NonFungibleToken {
         FlowSignCollectionPublic,
         NonFungibleToken.Provider,
         NonFungibleToken.Receiver,
-        NonFungibleToken.CollectionPublic
-        {
+        NonFungibleToken.CollectionPublic,
+        MetadataViews.ResolverCollection {
         /// dictionary of NFT conforming tokens
         /// NFT is a resource type with an UInt64 ID field
         ///
@@ -337,6 +397,19 @@ access(all) contract FlowSign: NonFungibleToken {
             }
         }
 
+        /// Gets a reference to the NFT only conforming to the `{MetadataViews.Resolver}`
+        /// interface so that the caller can retrieve the views that the NFT
+        /// is implementing and resolve them
+        ///
+        /// @param id: The ID of the wanted NFT
+        /// @return The resource reference conforming to the Resolver interface
+        /// 
+        access(all) fun borrowViewResolver(id: UInt64): &{MetadataViews.Resolver} {
+            let nft = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
+            let flowSignNFT = nft as! &FlowSign.NFT
+            return flowSignNFT
+        }
+
         /// Mint a Contract NFT
         ///
         access(all) fun createContract(
@@ -387,6 +460,48 @@ access(all) contract FlowSign: NonFungibleToken {
         return <- create Collection()
     }
 
+    /// Function that resolves a metadata view for this contract.
+    ///
+    /// @param view: The Type of the desired view.
+    /// @return A structure representing the requested view.
+    ///
+    pub fun resolveView(_ view: Type): AnyStruct? {
+        switch view {
+            case Type<MetadataViews.NFTCollectionData>():
+                return MetadataViews.NFTCollectionData(
+                    storagePath: FlowSign.CollectionStoragePath,
+                    publicPath: FlowSign.CollectionPublicPath,
+                    providerPath: /private/flowSignCollection,
+                    publicCollection: Type<&FlowSign.Collection{FlowSign.FlowSignCollectionPublic}>(),
+                    publicLinkedType: Type<&FlowSign.Collection{FlowSign.FlowSignCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Receiver,MetadataViews.ResolverCollection}>(),
+                    providerLinkedType: Type<&FlowSign.Collection{FlowSign.FlowSignCollectionPublic,NonFungibleToken.CollectionPublic,NonFungibleToken.Provider,MetadataViews.ResolverCollection}>(),
+                    createEmptyCollectionFunction: (fun (): @NonFungibleToken.Collection {
+                        return <-FlowSign.createEmptyCollection()
+                    })
+                )
+            case Type<MetadataViews.NFTCollectionDisplay>():
+                let media = MetadataViews.Media(
+                    file: MetadataViews.HTTPFile(
+                        url: "https://raw.githubusercontent.com/OpeOginni/flow-sign/main/public/FlowSign.png"
+                    ),
+                    mediaType: "image/png"
+                )
+        }
+        return nil
+    }
+
+    /// Function that returns all the Metadata Views implemented by a Non Fungible Token
+    ///
+    /// @return An array of Types defining the implemented views. This value will be used by
+    ///         developers to know which parameter to pass to the resolveView() method.
+    ///
+    pub fun getViews(): [Type] {
+        return [
+            Type<MetadataViews.NFTCollectionData>(),
+            Type<MetadataViews.NFTCollectionDisplay>()
+        ]
+    }
+
     /// Golazos contract initializer
     ///
     init() {
@@ -405,7 +520,12 @@ access(all) contract FlowSign: NonFungibleToken {
 
         // publish a reference to the Collection in storage
         self.account.link<&{FlowSignCollectionPublic}>(self.CollectionPublicPath, target: self.CollectionStoragePath)
+    
+        let d = FlowSign.resolveView(Type<MetadataViews.NFTCollectionData>())! as! MetadataViews.NFTCollectionData
 
+        self.account.unlink(d.providerPath)
+        self.account.link<&FlowSign.Collection{FlowSign.FlowSignCollectionPublic, NonFungibleToken.CollectionPublic, NonFungibleToken.Provider}>(d.providerPath, target: d.storagePath)
+ 
 
         // Let the world know we are here
         emit ContractInitialized()

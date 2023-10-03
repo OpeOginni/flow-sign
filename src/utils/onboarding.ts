@@ -15,9 +15,11 @@ config({
 export async function createFlowAccount(publicKey: string): Promise<string> {
   const txHash = await mutate({
     cadence: `
+    import MetadataViews from 0x631e88ae7f1d7c20
+    import NonFungibleToken from 0x631e88ae7f1d7c20
     import FungibleToken from 0x9a0766d93b6608b7
     import FlowToken from 0x7e60df042a9c0868
-    import FlowSign from 0xb7b7736e23079590
+    import FlowSign from 0xdf8619a80f083cff
 
     transaction (publicKey: String, ) {
       prepare(signer: AuthAccount) {
@@ -49,13 +51,17 @@ export async function createFlowAccount(publicKey: string): Promise<string> {
 			)
 
       // Create a FlowSign Collection for the new account
+      let d = FlowSign.resolveView(Type<MetadataViews.NFTCollectionData>())! as! MetadataViews.NFTCollectionData
 
       let emptyCollection <- FlowSign.createEmptyCollection()
 
       newAccount.save(<-emptyCollection, to: FlowSign.CollectionStoragePath)
 
+      newAccount.unlink(FlowSign.CollectionPublicPath)
       newAccount.link<&{FlowSign.FlowSignCollectionPublic}>(FlowSign.CollectionPublicPath, target: FlowSign.CollectionStoragePath)
 
+      newAccount.unlink(d.providerPath)
+      newAccount.link<&FlowSign.Collection{FlowSign.FlowSignCollectionPublic, NonFungibleToken.CollectionPublic, NonFungibleToken.Provider}>(d.providerPath, target: d.storagePath)
       }
     }
     `,

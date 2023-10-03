@@ -26,7 +26,7 @@ export async function createContractTransaction(creationDetials: ContractCreatio
 
         const txHash = await mutate({
             cadence: `
-import FlowSign from 0xb7b7736e23079590
+import FlowSign from 0xdf8619a80f083cff
 
  transaction(contractTitle: String, contractText: String, potentialSigners: [Address], expirationDate: UFix64, neededSignerAmount: Int) {
 //    transaction(contractText: String) {
@@ -81,7 +81,7 @@ export async function signContractTransaction(signingDetails: ContractSigningDat
 
         const txHash = await mutate({
             cadence: `
-import FlowSign from 0xb7b7736e23079590
+import FlowSign from 0xdf8619a80f083cff
 
 transaction(contractID: UInt64) {
 

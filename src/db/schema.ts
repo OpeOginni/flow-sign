@@ -17,6 +17,7 @@ export const users = pgTable("user", {
     accountPrivKey: varchar("accountPrivKey"),
     accountPubKey: varchar("accountPubKey"),
     walletAddress: varchar("walletAddress"),
+    linkedCustodialAddress: varchar("linkedCustodialAddress")
 
 });
 
