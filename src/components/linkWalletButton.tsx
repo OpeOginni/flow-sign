@@ -48,8 +48,6 @@ export default function LinkWalletButton(props: LinkWalletButtonProps) {
     try {
       setLoading(true); // Set loading state to true while processing
 
-      console.log(user);
-
       await setupChildAccount(
         props.flowSignWalletPrivateKey,
         props.flowSignWalletAddress
@@ -79,8 +77,6 @@ export default function LinkWalletButton(props: LinkWalletButtonProps) {
         accountAddress: props.flowSignWalletAddress,
         linkedCustodialAddress: user.addr,
       });
-
-      console.log("User Updated", newUser);
     } catch (e: any) {
       console.log(e);
 

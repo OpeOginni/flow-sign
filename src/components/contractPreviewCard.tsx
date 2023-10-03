@@ -23,14 +23,9 @@ export async function ContractPreviewCard(props: previewCardProps) {
   );
 
   const formatEpochToDate = (epochTime: string) => {
-    console.log(epochTime);
-
     const date = new Date(Number(epochTime) * 1000);
-    console.log(date);
     return date.toDateString(); // This will display the date in a human-readable format
   };
-
-  console.log(contractDetails);
 
   return (
     <Card className="relative w-[350px] h-[400px]">

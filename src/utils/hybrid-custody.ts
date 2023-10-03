@@ -55,11 +55,8 @@ export async function setupChildAccount(flowSignAccountPrivateKey: string, flowS
         authz: userAuthorizationFunction(flowSignAccountPrivateKey, "0", flowSignAccountAddress)
     })
 
-    console.log({ txHash });
     const txResult = await tx(txHash).onceExecuted();
-    console.log({ txResult });
     const { events } = txResult;
-    console.log(events)
 }
 
 export async function publishChildAccount(userWalletAddress: string, flowSignAccountPrivateKey: string, flowSignAccountAddress: string) {
@@ -89,10 +86,7 @@ export async function publishChildAccount(userWalletAddress: string, flowSignAcc
         authz: userAuthorizationFunction(flowSignAccountPrivateKey, "0", flowSignAccountAddress)
     })
 
-    console.log({ txHash });
     const txResult = await tx(txHash).onceExecuted();
-    console.log({ txResult });
-    console.log("Publisheddd")
 }
 
 export async function claimChildAccount(userAuthFunction: Function, childAccountAddress: string) {
@@ -163,9 +157,6 @@ export async function claimChildAccount(userAuthFunction: Function, childAccount
         authz: userAuthFunction
     })
 
-    console.log({ txHash });
     const txResult = await tx(txHash).onceExecuted();
-    console.log({ txResult });
-    console.log("Claimed")
 
 }

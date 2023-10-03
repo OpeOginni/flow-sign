@@ -50,9 +50,7 @@ import FlowSign from 0xdf8619a80f083cff
             authorizations: [userAuthorizationFunction(user.accountPrivKey!, "0", user.walletAddress!)],
         });
 
-        console.log({ txHash });
         const txResult = await tx(txHash).onceExecuted();
-        console.log({ txResult });
         const { events } = txResult;
 
 
@@ -107,9 +105,7 @@ transaction(contractID: UInt64) {
             authorizations: [userAuthorizationFunction(user.accountPrivKey!, "0", user.walletAddress!)],
         });
 
-        console.log({ txHash });
         const txResult = await tx(txHash).onceExecuted();
-        console.log({ txResult });
         const { events } = txResult;
 
 
