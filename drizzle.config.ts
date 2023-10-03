@@ -8,6 +8,11 @@ export default {
   out: "./drizzle",
   driver: "pg",
   dbCredentials: {
-    connectionString: process.env.LOCAL_CONNECTION_URL!,
+    // connectionString: process.env.LOCAL_CONNECTION_URL!,
+    host: process.env.PGHOST!,
+    user: process.env.PGUSER,
+    password: process.env.PGPASSWORD,
+    database: process.env.PGDATABASE!,
+    ssl: process.env.DB_SSL! === "true",
   },
 } satisfies Config;

@@ -11,7 +11,7 @@ const connectionDetails: postgres.Options<{}> = {
   database: process.env.PGDATABASE,
   username: process.env.PGUSER,
   password: process.env.PGPASSWORD,
-  ssl: process.env.DB_SSL === "false",
+  ssl: process.env.DB_SSL! === "true",
   max: 1,
 };
 
