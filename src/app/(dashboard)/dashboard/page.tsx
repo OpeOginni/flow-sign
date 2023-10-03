@@ -37,7 +37,10 @@ export default async function Dashboard() {
           You can always link a Non-Custodial Wallet and get all your Contracts
           on your personal wallet
         </h1>
-        <LinkWalletButton />
+        <LinkWalletButton
+          flowSignWalletAddress={user.walletAddress!}
+          flowSignWalletPrivateKey={user.accountPrivKey!}
+        />
       </div>
     </div>
   );

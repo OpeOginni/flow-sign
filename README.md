@@ -1,36 +1,19 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+### LW3 Hackathon
 
-## Getting Started
+## Introduction to `Flow Sign`
 
-First, run the development server:
+Flow Sign is a Dapp Built on the Flow Blockchain that lets individuals create Contracts, share them with other users to sing the contract, store contracts and verify those contract. Flow Sign tried to solve the issue of trust in the Commercial world, as Pysical Paper Contracts can be easier destroyed, these contract are minted as NFTs on the Flow Blockchain, and a copy is distributed to the Collection of everyone who is called on to sign on the contract.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Account Abstraction and Hybrid - Custody
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Flow Sign was my chance to really dig deep and test out the Account Abstraction and Hybrid - Custody feature of Flow. Users can sign up using their Gmails accouns are created for them on the backend, this makes running of transactions easier as users don't have to approve every transaction being made and users also don't have to worry about gas fees for these transactions.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Some users still would like to have the contracts on their personal Non-Custodial Wallet, this is possible thanls to Hybrid-Custody, on FlowSign users can link their Non-Custodial wallets to the wallets created for them, giving them access to their FlowSign Contracts, to Check and Verify even without logging in to the Dapp.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Installation and Setup
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Clone this repository
+- Install dependecies using `npm install`
+- Create a `.env` file and useing the variables in the `.env.example` file fill in the needed Variables
+- You can decide to run your local postgres docker image using the `docker-compose` file provided
+- Start the development server with `npm run dev`

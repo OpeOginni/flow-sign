@@ -1,5 +1,26 @@
 {
   "contracts": {
+    "CapabilityDelegator": {
+      "source": "./contracts/hybrid-custody/CapabilityDelegator.cdc",
+      "aliases": {
+        "emulator": "f233dcee88fe0abe",
+        "testnet": "294e44e1ec6993c6"
+      }
+    },
+    "CapabilityFactory": {
+      "source": "./contracts/hybrid-custody/CapabilityFactory.cdc",
+      "aliases": {
+        "emulator": "f233dcee88fe0abe",
+        "testnet": "294e44e1ec6993c6"
+      }
+    },
+    "CapabilityFilter": {
+      "source": "./contracts/hybrid-custody/CapabilityFilter.cdc",
+      "aliases": {
+        "emulator": "f233dcee88fe0abe",
+        "testnet": "294e44e1ec6993c6"
+      }
+    },
     "FlowSign": "./contracts/FlowSign.cdc",
     "FlowToken": {
       "source": "./contracts/utility/FlowToken.cdc",
@@ -15,6 +36,13 @@
         "emulator": "ee82856bf20e2aa6",
         "mainnet": "f233dcee88fe0abe",
         "testnet": "9a0766d93b6608b7"
+      }
+    },
+    "HybridCustody": {
+      "source": "./contracts/hybrid-custody/HybridCustody.cdc",
+      "aliases": {
+        "emulator": "f233dcee88fe0abe",
+        "testnet": "294e44e1ec6993c6"
       }
     },
     "MetadataViews": {
@@ -43,7 +71,7 @@
       "key": "3af33a6a71acea977b97fc73807ad73d1058505ffcac3fcea406e2a83b170963"
     },
     "flow-sign-admin": {
-      "address": "b7b7736e23079590",
+      "address": "df8619a80f083cff",
       "key": {
         "type": "file",
         "location": "flow-sign-admin.pkey"
@@ -52,7 +80,15 @@
   },
   "deployments": {
     "emulator": {
-      "emulator-account": ["NonFungibleToken", "FungibleToken", "MetadataViews"]
+      "emulator-account": [
+        "NonFungibleToken",
+        "FungibleToken",
+        "MetadataViews",
+        "HybridCustody",
+        "CapabilityDelegator",
+        "CapabilityFactory",
+        "CapabilityFilter"
+      ]
     },
     "testnet": {
       "flow-sign-admin": ["FlowSign"]

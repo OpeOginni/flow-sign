@@ -16,7 +16,7 @@ export async function getUserContractIDs(userAddress: string): Promise<[number]>
 
     const availableIDs: [number] = await query({
         cadence: `
-            import FlowSign from 0xb7b7736e23079590
+            import FlowSign from 0xdf8619a80f083cff
 
             /// This script gets the NFT IDs in a User's Collection, Each of the NFTs Have a Unique Contract Resource, and Each Contract Resource can have multple NFT Copies per Unique Signer
             pub fun main(address: Address): [UInt64] {
@@ -55,7 +55,7 @@ export async function getContractDetailsFromID(ownerAddress: string, ownerContra
 
     const contractDetails: ContractDetailsData = await query({
         cadence: `
-            import FlowSign from 0xb7b7736e23079590
+            import FlowSign from 0xdf8619a80f083cff
 
             pub fun main(address: Address, userContractNftID: UInt64): {String: AnyStruct} {
 
@@ -94,7 +94,7 @@ export async function getContractStatus(ownerAddress: string, ownerContractNftID
 
     const contractStatus: string = await query({
         cadence: `
-            import FlowSign from 0xb7b7736e23079590
+            import FlowSign from 0xdf8619a80f083cff
 
             pub fun main(address: Address, userContractNftID: UInt64): String {
 
@@ -125,7 +125,7 @@ export async function getContractSignatureCount(ownerAddress: string, ownerContr
 
     const contractSignatureCount: number = await query({
         cadence: `
-            import FlowSign from 0xb7b7736e23079590
+            import FlowSign from 0xdf8619a80f083cff
 
             pub fun main(address: Address, userContractNftID: UInt64): Int {
 
@@ -154,7 +154,7 @@ export async function getContractText(ownerAddress: string, ownerContractNftID: 
 
     const contractText: string = await query({
         cadence: `
-            import FlowSign from 0xb7b7736e23079590
+            import FlowSign from 0xdf8619a80f083cff
 
             pub fun main(address: Address, userContractNftID: UInt64): String {
 
@@ -183,7 +183,7 @@ export async function getContractSigners(ownerAddress: string, ownerContractNftI
 
     const contractSignatures: Record<string, boolean> = await query({
         cadence: `
-            import FlowSign from 0xb7b7736e23079590
+            import FlowSign from 0xdf8619a80f083cff
 
             pub fun main(address: Address, userContractNftID: UInt64): {Address: Bool} {
 
@@ -206,4 +206,44 @@ export async function getContractSigners(ownerAddress: string, ownerContractNftI
     })
 
     return contractSignatures
+}
+
+export async function getChildAccountContractNftIDs(accountAddress: string, userCustodialAddress: string): Promise<number[]> {
+
+
+    const userContractNFT_IDs: number[] = await query({
+        cadence: `
+        import HybridCustody from 0x294e44e1ec6993c6
+
+        import NonFungibleToken from 0x631e88ae7f1d7c20
+        import MetadataViews from 0x631e88ae7f1d7c20
+        import FlowSign from 0xdf8619a80f083cff
+        
+        // Verify that a child address borrowed as a child will let the parent borrow an NFT provider capability
+        pub fun main(parent: Address, child: Address): [UInt64] {
+            let acct = getAuthAccount(parent)
+            let m = acct.borrow<&HybridCustody.Manager>(from: HybridCustody.ManagerStoragePath)
+                ?? panic("manager does not exist")
+        
+            let childAcct = m.borrowAccount(addr: child) ?? panic("child account not found")
+        
+            let d = FlowSign.resolveView(Type<MetadataViews.NFTCollectionData>())! as! MetadataViews.NFTCollectionData
+        
+            let nakedCap = childAcct.getCapability(path: d.providerPath, type: Type<&{NonFungibleToken.CollectionPublic}>())
+                ?? panic("capability not found")
+        
+            // let nakedCap = childAcct.getCapability(path: d.providerPath, type: Type<&{FlowSign.FlowSignCollectionPublic}>())
+            //     ?? panic("capability not found")
+        
+            let cap = nakedCap as! Capability<&{NonFungibleToken.CollectionPublic}>
+            let borrowed = cap.borrow() ?? panic("unable to borrow nft provider collection")
+        
+            return borrowed.getIDs()
+        }
+            `,
+        args: (arg, t) => [arg(userCustodialAddress, t.Address,), arg(accountAddress, t.Address)],
+        limit: 1000,
+    })
+
+    return userContractNFT_IDs
 }

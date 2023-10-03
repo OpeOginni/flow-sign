@@ -15,17 +15,19 @@ const connectionDetails: postgres.Options<{}> = {
   max: 1,
 };
 
-const localConnectionURL = process.env.LOCAL_CONNECTION_URL!;
+// const localConnectionURL = process.env.LOCAL_CONNECTION_URL!;
 
 // for migrations
 // const migrationClient = postgres(connectionDetails);
 // migrate(drizzle(migrationClient), "./src/drizzle/migrations");
 
 // for query purposes
-const queryClient = postgres(localConnectionURL, {
-  ssl: false,
-  connect_timeout: 10000,
-});
+// const queryClient = postgres(localConnectionURL, {
+//   ssl: false,
+//   connect_timeout: 10000,
+// });
+
+const queryClient = postgres(connectionDetails);
 
 // for query purposes
 export const db: PostgresJsDatabase = drizzle(queryClient);

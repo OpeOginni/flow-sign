@@ -8,6 +8,13 @@
       "when": 1695460131159,
       "tag": "0000_perfect_shockwave",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1696334479123,
+      "tag": "0001_goofy_sally_floyd",
+      "breakpoints": true
     }
   ]
 }
