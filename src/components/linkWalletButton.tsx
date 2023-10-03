@@ -37,6 +37,8 @@ export default function LinkWalletButton(props: LinkWalletButtonProps) {
 
   const linkedWallet = trpc.updateLinkedWallet.useMutation();
 
+  // const {data} = trpc.getCustodialWalletFromChildWallet.useQuery(props.flowSignWalletAddress)
+
   useEffect(() => {
     const unsubscribe = fcl.currentUser.subscribe((user: any) => setUser(user));
     return () => unsubscribe();

@@ -38,6 +38,11 @@ export const appRouter = router({
 
         return (user[0].walletAddress)
     }),
+    getCustodialWalletFromChildWallet: publicProcedure.input(String).query(async (opts) => {
+        const user = await db.select().from(users).where(eq(users.walletAddress, opts.input))
+
+        return (user[0].linkedCustodialAddress)
+    }),
     updateLinkedWallet: publicProcedure.input(z.object({
         accountAddress: z.string(),
         linkedCustodialAddress: z.string()
