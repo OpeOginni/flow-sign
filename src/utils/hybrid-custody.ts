@@ -9,7 +9,7 @@ config({
 
 const childAccountName = "Flow Sign Child Account"
 const childAccountDesc = "Child Account for the Flow Sign App"
-const thumbnailURL = "https://avatars.githubusercontent.com/u/8186664?s=200&v=4"
+const thumbnailURL = "https://raw.githubusercontent.com/OpeOginni/flow-sign/main/public/FlowSign.png"
 
 export async function setupChildAccount(flowSignAccountPrivateKey: string, flowSignAccountAddress: string) {
 
