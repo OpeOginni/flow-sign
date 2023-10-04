@@ -1,9 +1,15 @@
 import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
 import { cn } from "@/lib/utils";
+import { Metadata } from "next";
 import { Poppins } from "next/font/google";
 
 const poppins = Poppins({ weight: "600", subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Flow Sign | Dashboard",
+  description: "Contract Management on the Flow Blockchain",
+};
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (

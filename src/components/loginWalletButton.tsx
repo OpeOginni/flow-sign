@@ -2,6 +2,9 @@
 import * as fcl from "@onflow/fcl";
 
 fcl.config({
+  "app.detail.title": "Flow Sign",
+  "app.detail.icon":
+    "https://raw.githubusercontent.com/OpeOginni/flow-sign/main/public/FlowSign.png",
   "accessNode.api": "https://rest-testnet.onflow.org",
   "discovery.wallet": `https://fcl-discovery.onflow.org/testnet/authn`,
 });
