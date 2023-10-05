@@ -1,5 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
+
 import { Inter, Poppins } from "next/font/google";
 import AuthProvider from "./AuthProvider";
 import Provider from "./_trpc/Provider";
@@ -23,7 +25,11 @@ export default function RootLayout({
     <AuthProvider>
       <html lang="en">
         <body className={cn(poppins.className, "bg-[#dff6ed]")}>
-          <Provider>{children}</Provider>
+          <Provider>
+            {children}
+            <Analytics />
+          </Provider>
+
           <Toaster />
         </body>
       </html>
